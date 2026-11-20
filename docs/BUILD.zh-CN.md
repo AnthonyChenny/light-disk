@@ -4,7 +4,7 @@
 
 ## 环境
 
-Apple Silicon Mac，Swift 5.9+ 语言工具链；当前代码在 Swift 6.4 / macOS 27 SDK 构建验证。请使用提供 macOS 27 SDK 的工具链，以编译文件系统扩展设置入口；15.4+ 是运行目标，其他运行版本尚未实测。
+Apple Silicon Mac，Swift 5.9+ 语言工具链以及支持 macOS 15.4+ 的 SDK；本机使用 Swift 6.4 / macOS 27 SDK。扩展设置按钮使用通用的“登录项与扩展”入口，以便兼容较早的 SDK。15.4+ 是运行目标，其他运行版本尚未实测。
 
 安装 Xcode 或相应 Command Line Tools，**先手动安装官方 macFUSE 5.5.0（含开发头文件）**。检查 `/usr/local/include/fuse/fuse.h`、`/usr/local/lib/libfuse.dylib`。引擎构建需要 `autoconf`、`automake`、`libtool`、`gettext`；这些是构建依赖，不打入用户包。若使用 Homebrew，可执行 `brew install autoconf automake libtool gettext`；需让 `autopoint` 等工具在 PATH 中。
 

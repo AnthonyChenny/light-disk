@@ -3,7 +3,6 @@ import SwiftUI
 import DiskArbitration
 import ServiceManagement
 import UserNotifications
-import FSKit
 import UniformTypeIdentifiers
 import QingPanCore
 
@@ -220,9 +219,7 @@ final class AppModel: ObservableObject {
         if panel.runModal() == .OK, let url = panel.url { NSWorkspace.shared.open(url) }
     }
     func openExtensionSettings() {
-        if #available(macOS 27.0, *) {
-            _ = FSClient.shared.openFileSystemExtensionsSettings()
-        } else { SMAppService.openSystemSettingsLoginItems() }
+        SMAppService.openSystemSettingsLoginItems()
     }
     private func sendNotification(_ title: String, _ body: String) {
         guard notify else { return }

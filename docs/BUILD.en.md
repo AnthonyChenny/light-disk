@@ -4,7 +4,7 @@
 
 ## Environment
 
-Apple Silicon, Swift language level 5.9+. Local validation used Swift 6.4 and the macOS 27 SDK. Use a toolchain supplying the macOS 27 SDK for the file system extension settings API. The deployment target is 15.4+; other runtime versions remain unverified.
+Apple Silicon, Swift language level 5.9+, and an SDK supporting macOS 15.4+. Local validation used Swift 6.4 and the macOS 27 SDK. The extension settings button uses the general Login Items & Extensions entry point for compatibility with earlier SDKs. The deployment target is 15.4+; other runtime versions remain unverified.
 
 Install Xcode or matching Command Line Tools. **Manually install official macFUSE 5.5.0 with its development headers first.** Check `/usr/local/include/fuse/fuse.h` and `/usr/local/lib/libfuse.dylib`. The engine build needs `autoconf`, `automake`, `libtool` and `gettext`; these are build dependencies, not bundled user dependencies. With Homebrew: `brew install autoconf automake libtool gettext`. Ensure tools including `autopoint` are on PATH.
 
