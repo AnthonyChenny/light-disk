@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Installation / 安装指南
+    url: https://github.com/AnthonyChenny/light-disk/blob/main/docs/INSTALL.zh-CN.md
+    about: Installation order, permissions, upgrade and uninstall

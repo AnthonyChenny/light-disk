@@ -1,0 +1,10 @@
+#!/bin/sh
+set -eu
+/usr/sbin/chown -R root:wheel '/Library/Application Support/QingPan'
+/bin/chmod -R go-w '/Library/Application Support/QingPan'
+/usr/sbin/chown root:wheel /Library/PrivilegedHelperTools/local.qingpan.helper /Library/LaunchDaemons/local.qingpan.helper.plist
+/bin/chmod 755 /Library/PrivilegedHelperTools/local.qingpan.helper
+/bin/chmod 644 /Library/LaunchDaemons/local.qingpan.helper.plist
+/bin/launchctl bootout system/local.qingpan.helper 2>/dev/null || true
+/bin/launchctl bootstrap system /Library/LaunchDaemons/local.qingpan.helper.plist
+exit 0

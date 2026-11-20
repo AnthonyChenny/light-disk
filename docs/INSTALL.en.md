@@ -1,0 +1,85 @@
+# Install, upgrade and uninstall
+
+🌐 [中文](INSTALL.zh-CN.md) · **English** · [README](../README.en.md)
+
+## 1. Download and verify
+
+Apple Silicon only. Full local validation used macOS 27.0.1. Current tag: `v0.1.3-beta.1`; asset: `light-disk-0.1.3-beta.1-arm64.dmg`. The 15.4+ deployment target is not a claim that every OS version was tested.
+
+Download the DMG and SHA256SUMS.txt from [Releases](https://github.com/AnthonyChenny/light-disk/releases), then compare the output below with the checksum in the same Release:
+
+```sh
+shasum -a 256 light-disk-0.1.3-beta.1-arm64.dmg
+```
+
+The source ZIP includes the matching NTFS engine source and modifications; end users do not need it to install.
+
+## 2. Install macFUSE first
+
+Download 5.5.0 from the [official release](https://github.com/macfuse/macfuse/releases/tag/macfuse-5.5.0), run its official `.pkg` and authenticate. light-disk does not bundle, download or automatically install macFUSE.
+
+macFUSE connects a filesystem process to macOS. NTFS-3G understands NTFS data. Both are needed for NTFS writes in Finder; native formats such as exFAT use macOS support.
+
+## 3. Enable FSKit extensions
+
+System Settings → General → Login Items & Extensions → File System Extensions: enable `macFUSE` and `macFUSE (local)`. Names vary across OS releases. Prefer the “By Category” file system extension view instead of only toggling the “By Application” entries.
+
+light-disk explicitly uses FSKit. You do not need Recovery Mode, reduced startup security or the legacy kernel extension. See the [official macFUSE guide](https://github.com/macfuse/macfuse/wiki/Getting-Started). For nonresponsive toggles, consult [upstream issue #1194](https://github.com/macfuse/macfuse/issues/1194) and try “By Category”. If it still fails, report sanitized details; do not edit system databases, reset LaunchServices or run unknown repair scripts. This repository excludes the original development machine's repair scripts.
+
+## 4. Install light-disk and its helper
+
+Open the light-disk DMG and run `安装轻盘.pkg` (Install QingPan). The window title is `安装轻盘`. Authenticate in the system dialog. It installs:
+
+- `/Applications/轻盘.app`: the Chinese-language menu bar App.
+- `/Library/PrivilegedHelperTools/local.qingpan.helper`: the restricted helper.
+- `/Library/LaunchDaemons/local.qingpan.helper.plist`: its service registration.
+- `/Library/Application Support/QingPan/`: engine, licenses and signature configuration.
+
+**Do not just copy the App or mix components from different versions.** The App and helper verify each other's signatures.
+
+This Beta is ad-hoc signed and not notarized. Downloaded software may be blocked: verify the origin and checksum, then review Privacy & Security and use Open Anyway if offered. Do not disable Gatekeeper or SIP. If no override is available, stop and report the issue. A successful run on the development Mac does not validate installation on every other Mac.
+
+## 5. Authorize disk access
+
+Open System Settings → Privacy & Security → Full Disk Access:
+
+1. Click `+`; press `⌘⇧G` in the file chooser.
+2. Enter `/Library/PrivilegedHelperTools/local.qingpan.helper`, add it and switch it on.
+3. Authenticate with Touch ID or a password in the system dialog if requested.
+4. Allow the App's removable-volume request, or enable Files & Folders → 轻盘 → Removable Volumes.
+5. Relaunch light-disk; follow any system prompt to quit and reopen it.
+
+Full Disk Access is broad. The helper uses it to open physical disks; its exposed interface restricts operations to validated external physical NTFS partitions. Publishing its source does not narrow the OS permission. The device user must authorize it; notarization does not grant it automatically.
+
+## 6. Connect and use a disk
+
+Open `轻盘` in Applications and click the disk icon in the menu bar. Connect your disk and wait for `可读写`. “Components installed” alone does not mean the volume mounted successfully.
+
+| Chinese UI | Meaning |
+|---|---|
+| 可读写 | Read/write ready; use Finder in both directions |
+| 只读 | Read-only; writing is unavailable |
+| 未挂载 | Not mounted in Finder |
+| 详情 | Device, format, location and full diagnostic message |
+| 推出 | Safely eject the whole physical drive before unplugging |
+
+Ejecting a partition may also eject other partitions on that drive. Quitting the App closes its menu bar UI; mounted engines may keep running. Eject safely before disconnecting.
+
+## Troubleshooting
+
+- **No capacity or no device in Disk Utility:** check USB data connectivity, hubs and accessory authorization. A lit LED does not establish data enumeration. Do not format a disk to diagnose USB detection.
+- **Dirty or hibernated volume:** reconnect to Windows, close files and use Safely Remove Hardware. If still inconsistent, back up and check in Windows. light-disk does not clear hibernation data or force repairs.
+- **Access denied:** check Full Disk Access for the helper; updates with a different ad-hoc signature may require reauthorization.
+- **Extension unavailable:** check both FSKit modules and the “By Category” view. Installed components do not guarantee a successful mount.
+- **Paragon NTFS present:** disable its automatic takeover, or use its official uninstaller if appropriate. light-disk does not remove third-party components.
+- **Busy disk cannot eject:** close open files, Finder previews and terminals whose working directory is on the disk; retry. No forced unmount is performed.
+
+## Upgrade
+
+Close files, safely eject all NTFS volumes mounted by light-disk and quit the App. Run the complete new `.pkg`. The installer refuses to update while managed NTFS mounts remain. Relaunch and check permissions. Replacing only the App may break its pinned helper-signature pairing.
+
+## Uninstall
+
+Eject managed NTFS volumes and disable `登录后自动启动` (launch at login). In Settings (`齿轮`) → `更多` (More) → `卸载轻盘组件…` (Uninstall components), authenticate; then quit the App and move `/Applications/轻盘.app` to Trash. The uninstaller refuses to remove components while managed mounts exist.
+
+The light-disk uninstaller retains macFUSE and other software. Remove macFUSE separately through its official settings panel only if no other software needs it. You can remove the uninstalled helper's privacy permission entry in System Settings.

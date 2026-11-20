@@ -1,0 +1,12 @@
+* text=auto
+*.sh text eol=lf
+Packaging/preinstall text eol=lf
+Packaging/postinstall text eol=lf
+*.py text eol=lf
+*.md text eol=lf
+*.png binary
+*.tar.gz binary
+*.jpg binary
+# Preserve upstream license whitespace and unified-diff context verbatim.
+ThirdParty/** -whitespace
+*.patch -whitespace

@@ -1,0 +1,22 @@
+# Local builds and release assets (upload these to Releases, not Git)
+.build/
+work/
+build/
+dist/
+*.dmg
+*.pkg
+*.app/
+*.dSYM/
+.DS_Store
+__pycache__/
+*.pyc
+.swiftpm/
+# Signing credentials and private configuration
+.env
+.env.*
+*.p12
+*.pfx
+*.pem
+*.key
+*.mobileprovision
+*.provisionprofile

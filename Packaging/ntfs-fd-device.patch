@@ -1,0 +1,92 @@
+--- a/src/ntfs-3g_common.c
++++ b/src/ntfs-3g_common.c
+@@ -1,3 +1,7 @@
++/* Modified by light-disk contributors, 2026-11-20.
++ * Darwin inherited-device-descriptor integration; see ThirdParty/MODIFICATIONS.md.
++ * This file retains its upstream license.
++ */
+ /**
+  * ntfs-3g_common.c - Common definitions for ntfs-3g and lowntfs-3g.
+  *
+@@ -678,6 +682,18 @@
+ 				
+ 				/* Canonicalize device name (mtab, etc) */
+ 				popts->arg_device = optarg;
++#ifdef __APPLE__
++				/* A privileged opener can pass one device descriptor to a
++				 * user-session FSKit process. Darwin realpath() does not
++				 * preserve fdesc paths, so retain a valid numeric /dev/fd/N.
++				 * Opening it below still enforces the descriptor's access. */
++				if (!strncmp(optarg, "/dev/fd/", 8) && optarg[8] &&
++				    strspn(optarg + 8, "0123456789") == strlen(optarg + 8) &&
++				    strlen(optarg) <= PATH_MAX) {
++					strcpy(popts->device, optarg);
++					break;
++				}
++#endif
+ 				if (!ntfs_realpath_canonicalize(optarg,
+ 						popts->device)) {
+ 					ntfs_log_perror("%s: Failed to access "
+--- a/src/ntfs-3g.c
++++ b/src/ntfs-3g.c
+@@ -1,3 +1,7 @@
++/* Modified by light-disk contributors, 2026-11-20.
++ * Darwin inherited-device-descriptor integration; see ThirdParty/MODIFICATIONS.md.
++ * This file retains its upstream license.
++ */
+ /**
+  * ntfs-3g - Third Generation NTFS Driver
+  *
+@@ -4446,6 +4450,14 @@
+ #endif
+ 
+ #ifndef FUSE_INTERNAL
++#ifdef __APPLE__
++	/* FSKit mounts run in a user session. A numeric fdesc path uses an
++	 * already-authorized descriptor, not a newly privileged block open.
++	 * macFUSE's user-space backend does not need Linux fuseblk handling. */
++	if (getuid() && !strncmp(opts.device, "/dev/fd/", 8) && opts.device[8]
++	    && strspn(opts.device + 8, "0123456789") == strlen(opts.device + 8))
++		ctx->blkdev = FALSE;
++#endif
+ 	if (getuid() && ctx->blkdev) {
+ 		ntfs_log_error("%s", unpriv_fuseblk_msg);
+ 		err = NTFS_VOLUME_NO_PRIVILEGE;
+--- a/libntfs-3g/unix_io.c
++++ b/libntfs-3g/unix_io.c
+@@ -1,3 +1,7 @@
++/* Modified by light-disk contributors, 2026-11-20.
++ * Darwin inherited-device-descriptor integration; see ThirdParty/MODIFICATIONS.md.
++ * This file retains its upstream license.
++ */
+ /**
+  * unix_io.c - Unix style disk io functions. Originated from the Linux-NTFS project.
+  *
+@@ -140,7 +144,26 @@
+ 	 */ 
+ 	if (!NDevBlock(dev) && (flags & O_RDWR) == O_RDWR)
+ 		flags |= O_EXCL;
+-	*(int*)dev->d_private = open(dev->d_name, flags);
++#ifdef __APPLE__
++	/* Duplicate a deliberately inherited descriptor. Reopening a Darwin
++	 * fdesc path can recheck the original device's node permissions. */
++	if (!strncmp(dev->d_name, "/dev/fd/", 8) && dev->d_name[8] &&
++	    strspn(dev->d_name + 8, "0123456789") == strlen(dev->d_name + 8)) {
++		char *end;
++		long inherited = strtol(dev->d_name + 8, &end, 10);
++		int mode = (inherited >= 0 && inherited <= INT_MAX)
++			? fcntl((int)inherited, F_GETFL) : -1;
++		if (mode < 0 || ((flags & O_ACCMODE) == O_RDWR &&
++			(mode & O_ACCMODE) != O_RDWR) ||
++			(mode & O_ACCMODE) == O_WRONLY) {
++			errno = EACCES;
++			*(int*)dev->d_private = -1;
++		} else {
++			*(int*)dev->d_private = dup((int)inherited);
++		}
++	} else
++#endif
++		*(int*)dev->d_private = open(dev->d_name, flags);
+ 	if (*(int*)dev->d_private == -1) {
+ 		err = errno;
+ 			/* if permission error and rw, retry read-only */

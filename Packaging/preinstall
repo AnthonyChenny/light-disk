@@ -1,0 +1,7 @@
+#!/bin/sh
+set -eu
+if /sbin/mount | /usr/bin/grep -F ' on /Volumes/轻盘-' >/dev/null; then
+    echo '请先安全推出轻盘挂载的 NTFS 磁盘，再更新组件。' >&2
+    exit 75
+fi
+exit 0
