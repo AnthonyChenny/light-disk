@@ -65,6 +65,6 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md). Include 
 
 If light-disk has been useful to you, you're welcome to buy me a coffee. No pressure—a star or a little feedback is just as appreciated.
 
-Scan the QR code to add me on WeChat if you'd like to chat about light-disk or treat me to a coffee:
+If you'd like to treat me to a coffee, scan the QR code below with Alipay. Thanks for your support!
 
-<img src="docs/assets/wechat-contact.jpg" alt="Add the author on WeChat using this contact QR code" width="260">
+<img src="docs/assets/alipay-support.jpg" alt="Support the author with Alipay" width="260">

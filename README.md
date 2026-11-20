@@ -65,6 +65,6 @@
 
 如果轻盘刚好帮到了你，也欢迎请作者喝杯咖啡。随意就好，点个 Star、提条建议，同样很开心。
 
-想聊聊轻盘，或者请杯咖啡，可以扫码加我微信：
+想请杯咖啡的话，用支付宝扫下面的二维码就好，谢谢你的支持：
 
-<img src="docs/assets/wechat-contact.jpg" alt="作者的微信加好友二维码" width="260">
+<img src="docs/assets/alipay-support.jpg" alt="支付宝赞助二维码" width="260">
