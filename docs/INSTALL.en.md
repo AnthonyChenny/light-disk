@@ -2,68 +2,50 @@
 
 🌐 [中文](INSTALL.zh-CN.md) · **English** · [README](../README.en.md)
 
-## 1. Download and verify
+## Check your Mac first
 
-Apple Silicon only. Full local validation used macOS 27.0.1. Current tag: `v0.1.3-beta.1`; asset: `light-disk-0.1.3-beta.1-arm64.dmg`. The 15.4+ deployment target is not a claim that every OS version was tested.
+Apple Silicon (M series) only. Full local validation used macOS 27.0.1; 15.4+ is a deployment target, not verified coverage for every version.
 
-Download the DMG and SHA256SUMS.txt from [Releases](https://github.com/AnthonyChenny/light-disk/releases), then compare the output below with the checksum in the same Release:
+## First installation: download, install, then connect
 
-```sh
-shasum -a 256 light-disk-0.1.3-beta.1-arm64.dmg
+**For a first-time setup, download only the two DMGs below. You do not need source code or other release attachments.** Install macFUSE first: it connects NTFS-3G to macOS. NTFS-3G is already included in the light-disk installer; there is no separate engine download.
+
+| Order | File | Download |
+|---|---|---|
+| ① | Official `macfuse-5.5.0.dmg` | [Download macFUSE](https://github.com/macfuse/macfuse/releases/download/macfuse-5.5.0/macfuse-5.5.0.dmg) ([official release](https://github.com/macfuse/macfuse/releases/tag/macfuse-5.5.0)) |
+| ② | `light-disk-0.1.3-beta.1-arm64.dmg` | [Download light-disk](https://github.com/AnthonyChenny/light-disk/releases/download/v0.1.3-beta.1/light-disk-0.1.3-beta.1-arm64.dmg) ([project release](https://github.com/AnthonyChenny/light-disk/releases/tag/v0.1.3-beta.1)) |
+
+### Step 1: Install macFUSE
+
+In **Finder → Downloads**, open `macfuse-5.5.0.dmg`, then double-click the **macFUSE `.pkg` installer inside**. Follow Continue → Install, and authenticate with your Mac administrator password or Touch ID in the system dialog. Restart first if the installer requests it. Skip reinstalling if 5.5.0 is already installed. You do not need `debug.tbz`, `sha256`, `sig` or `Source code` from the vendor's page.
+
+### Step 2: Enable both macFUSE extensions
+
+Open **System Settings → General → Login Items & Extensions → File System Extensions**. Enable **macFUSE** and **macFUSE (local)**, preferably through the “By Category” view. light-disk uses FSKit: **Recovery Mode and reduced startup security are not needed**. If the entry is missing or toggles do not respond, see [extension troubleshooting](#if-extension-switches-do-not-respond).
+
+### Step 3: Install light-disk
+
+Open `light-disk-0.1.3-beta.1-arm64.dmg` and double-click **`安装轻盘.pkg`** (Install QingPan) inside. Follow Continue → Install and authenticate. This installs the App in Applications, together with the engine and helper. Do not just drag an App; you do not need a second standalone `.pkg` download.
+
+### Step 4: Authorize disk access
+
+Open **System Settings → Privacy & Security → Full Disk Access**. Click **`+`**, press **`⌘⇧G`** in the file chooser, paste this path and press Return:
+
+```text
+/Library/PrivilegedHelperTools/local.qingpan.helper
 ```
 
-The source ZIP includes the matching NTFS engine source and modifications; end users do not need it to install.
+Select the file, add it and switch it on. Authenticate in the system dialog if needed. Also allow the App's removable-volume prompt, or check Privacy & Security → Files & Folders → 轻盘 → Removable Volumes. Full Disk Access is a broad system permission; review it before granting it.
 
-## 2. Install macFUSE first
+### Step 5: Launch and connect
 
-Download 5.5.0 from the [official release](https://github.com/macfuse/macfuse/releases/tag/macfuse-5.5.0), run its official `.pkg` and authenticate. light-disk does not bundle, download or automatically install macFUSE.
+Open **Finder → Applications → 轻盘**, click its disk icon in the top menu bar and connect your NTFS drive. Wait for **`可读写`** (read/write ready), then copy, paste or drag files in Finder. Click **`推出`** (Eject) and wait for completion before unplugging.
 
-macFUSE connects a filesystem process to macOS. NTFS-3G understands NTFS data. Both are needed for NTFS writes in Finder; native formats such as exFAT use macOS support.
+**If macOS cannot verify the developer or blocks opening:** this Beta is ad-hoc signed and not notarized. Verify the download source, then review System Settings → Privacy & Security and use Open Anyway if offered. If unavailable, stop and report the issue; do not disable Gatekeeper or SIP. [Troubleshooting, upgrade and uninstall](#troubleshooting)
 
-## 3. Enable FSKit extensions
+## If extension switches do not respond
 
-System Settings → General → Login Items & Extensions → File System Extensions: enable `macFUSE` and `macFUSE (local)`. Names vary across OS releases. Prefer the “By Category” file system extension view instead of only toggling the “By Application” entries.
-
-light-disk explicitly uses FSKit. You do not need Recovery Mode, reduced startup security or the legacy kernel extension. See the [official macFUSE guide](https://github.com/macfuse/macfuse/wiki/Getting-Started). For nonresponsive toggles, consult [upstream issue #1194](https://github.com/macfuse/macfuse/issues/1194) and try “By Category”. If it still fails, report sanitized details; do not edit system databases, reset LaunchServices or run unknown repair scripts. This repository excludes the original development machine's repair scripts.
-
-## 4. Install light-disk and its helper
-
-Open the light-disk DMG and run `安装轻盘.pkg` (Install QingPan). The window title is `安装轻盘`. Authenticate in the system dialog. It installs:
-
-- `/Applications/轻盘.app`: the Chinese-language menu bar App.
-- `/Library/PrivilegedHelperTools/local.qingpan.helper`: the restricted helper.
-- `/Library/LaunchDaemons/local.qingpan.helper.plist`: its service registration.
-- `/Library/Application Support/QingPan/`: engine, licenses and signature configuration.
-
-**Do not just copy the App or mix components from different versions.** The App and helper verify each other's signatures.
-
-This Beta is ad-hoc signed and not notarized. Downloaded software may be blocked: verify the origin and checksum, then review Privacy & Security and use Open Anyway if offered. Do not disable Gatekeeper or SIP. If no override is available, stop and report the issue. A successful run on the development Mac does not validate installation on every other Mac.
-
-## 5. Authorize disk access
-
-Open System Settings → Privacy & Security → Full Disk Access:
-
-1. Click `+`; press `⌘⇧G` in the file chooser.
-2. Enter `/Library/PrivilegedHelperTools/local.qingpan.helper`, add it and switch it on.
-3. Authenticate with Touch ID or a password in the system dialog if requested.
-4. Allow the App's removable-volume request, or enable Files & Folders → 轻盘 → Removable Volumes.
-5. Relaunch light-disk; follow any system prompt to quit and reopen it.
-
-Full Disk Access is broad. The helper uses it to open physical disks; its exposed interface restricts operations to validated external physical NTFS partitions. Publishing its source does not narrow the OS permission. The device user must authorize it; notarization does not grant it automatically.
-
-## 6. Connect and use a disk
-
-Open `轻盘` in Applications and click the disk icon in the menu bar. Connect your disk and wait for `可读写`. “Components installed” alone does not mean the volume mounted successfully.
-
-| Chinese UI | Meaning |
-|---|---|
-| 可读写 | Read/write ready; use Finder in both directions |
-| 只读 | Read-only; writing is unavailable |
-| 未挂载 | Not mounted in Finder |
-| 详情 | Device, format, location and full diagnostic message |
-| 推出 | Safely eject the whole physical drive before unplugging |
-
-Ejecting a partition may also eject other partitions on that drive. Quitting the App closes its menu bar UI; mounted engines may keep running. Eject safely before disconnecting.
+Try File System Extensions in the “By Category” view rather than only toggling “By Application”. See the [official guide](https://github.com/macfuse/macfuse/wiki/Getting-Started) and [upstream issue #1194](https://github.com/macfuse/macfuse/issues/1194). Report persistent failures; do not edit system databases or reduce startup security.
 
 ## Troubleshooting
 

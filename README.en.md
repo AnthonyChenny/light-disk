@@ -33,23 +33,48 @@ These are real screenshots from 0.1.2. The public Beta retains this interface. T
 | Signing | Ad-hoc; no Developer ID or Apple notarization |
 | Excluded | BitLocker unlocking, partitioning, formatting, automatic repair, ext4 |
 
-## Install in this order
+## First installation: download, install, then connect
 
-**macFUSE → enable FSKit extensions → light-disk package → disk permissions → connect your disk.**
+**For a first-time setup, download only the two DMGs below. You do not need source code or other release attachments.** Install macFUSE first: it connects NTFS-3G to macOS. NTFS-3G is already included in the light-disk installer; there is no separate engine download.
 
-1. **Install macFUSE first.** Download from the [official website](https://macfuse.github.io/) or the [official 5.5.0 release](https://github.com/macfuse/macfuse/releases/tag/macfuse-5.5.0). Our DMG **does not bundle, download or automatically install macFUSE**.
-2. **Enable file system extensions.** Open System Settings → General → Login Items & Extensions → File System Extensions, and enable `macFUSE` and `macFUSE (local)`. Prefer the “By Category” view. FSKit does not require reduced startup security or Recovery Mode setup.
-3. **Install light-disk.** Download `light-disk-0.1.3-beta.1-arm64.dmg` from Releases. Open it and run `安装轻盘.pkg` (Install QingPan). Authenticate in the system dialog. The package installs the App, NTFS-3G and a restricted helper; **copying only the App is insufficient**.
-4. **Authorize disk access.** In System Settings → Privacy & Security → Full Disk Access, add and enable `/Library/PrivilegedHelperTools/local.qingpan.helper`. Use `⌘⇧G` in the file chooser to enter the path. Full Disk Access is broad: review the permission before granting it; the helper needs it for physical disks. Also allow removable-volume access when requested, or enable the App's Removable Volumes entry under Files & Folders.
-5. **Launch and connect a disk.** Open `轻盘` in Applications and click its menu bar disk icon. `可读写` means read/write is ready. Use Finder for file operations and `推出` to eject before disconnecting.
+| Order | File | Download |
+|---|---|---|
+| ① | Official `macfuse-5.5.0.dmg` | [Download macFUSE](https://github.com/macfuse/macfuse/releases/download/macfuse-5.5.0/macfuse-5.5.0.dmg) ([official release](https://github.com/macfuse/macfuse/releases/tag/macfuse-5.5.0)) |
+| ② | `light-disk-0.1.3-beta.1-arm64.dmg` | [Download light-disk](https://github.com/AnthonyChenny/light-disk/releases/download/v0.1.3-beta.1/light-disk-0.1.3-beta.1-arm64.dmg) ([project release](https://github.com/AnthonyChenny/light-disk/releases/tag/v0.1.3-beta.1)) |
 
-Gatekeeper may block this downloaded Beta. After verifying its origin and SHA-256, review the warning in System Settings → Privacy & Security and use Open Anyway if offered. If no override is available, stop and report the issue. Do not disable Gatekeeper or SIP. [Full installation, upgrade and uninstall guide](docs/INSTALL.en.md)
+### Step 1: Install macFUSE
+
+In **Finder → Downloads**, open `macfuse-5.5.0.dmg`, then double-click the **macFUSE `.pkg` installer inside**. Follow Continue → Install, and authenticate with your Mac administrator password or Touch ID in the system dialog. Restart first if the installer requests it. Skip reinstalling if 5.5.0 is already installed. You do not need `debug.tbz`, `sha256`, `sig` or `Source code` from the vendor's page.
+
+### Step 2: Enable both macFUSE extensions
+
+Open **System Settings → General → Login Items & Extensions → File System Extensions**. Enable **macFUSE** and **macFUSE (local)**, preferably through the “By Category” view. light-disk uses FSKit: **Recovery Mode and reduced startup security are not needed**. If the entry is missing or toggles do not respond, see the [full installation guide](docs/INSTALL.en.md#if-extension-switches-do-not-respond).
+
+### Step 3: Install light-disk
+
+Open `light-disk-0.1.3-beta.1-arm64.dmg` and double-click **`安装轻盘.pkg`** (Install QingPan) inside. Follow Continue → Install and authenticate. This installs the App in Applications, together with the engine and helper. Do not just drag an App; you do not need a second standalone `.pkg` download.
+
+### Step 4: Authorize disk access
+
+Open **System Settings → Privacy & Security → Full Disk Access**. Click **`+`**, press **`⌘⇧G`** in the file chooser, paste this path and press Return:
+
+```text
+/Library/PrivilegedHelperTools/local.qingpan.helper
+```
+
+Select the file, add it and switch it on. Authenticate in the system dialog if needed. Also allow the App's removable-volume prompt, or check Privacy & Security → Files & Folders → 轻盘 → Removable Volumes. Full Disk Access is a broad system permission; review it before granting it.
+
+### Step 5: Launch and connect
+
+Open **Finder → Applications → 轻盘**, click its disk icon in the top menu bar and connect your NTFS drive. Wait for **`可读写`** (read/write ready), then copy, paste or drag files in Finder. Click **`推出`** (Eject) and wait for completion before unplugging.
+
+**If macOS cannot verify the developer or blocks opening:** this Beta is ad-hoc signed and not notarized. Verify the download source, then review System Settings → Privacy & Security and use Open Anyway if offered. If unavailable, stop and report the issue; do not disable Gatekeeper or SIP. [Troubleshooting, upgrade and uninstall](docs/INSTALL.en.md)
 
 ## Open source and releases
 
 The original Swift code is [MIT-licensed](LICENSE). NTFS-3G and our modifications retain their GPL/LGPL terms. macFUSE is a separate dependency with its own license, including restrictions on commercial binary bundling. **MIT does not cover the entire dependency collection.** See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-A Release should include the DMG, corresponding source ZIP and SHA256SUMS.txt. Use a `beta` tag and select **This is a pre-release** on GitHub. Local upload assets live in ignored `dist/`, outside Git history. [Current release notes](docs/releases/v0.1.3-beta.1.md)
+The only manually uploaded Release attachment is the DMG for end users. GitHub automatically provides two `Source code` archives for developers, including the tagged engine source, modifications and build scripts; they are not installation downloads. The hash is in the release notes. Local build/audit files remain in ignored `dist/`. [Current release notes](docs/releases/v0.1.3-beta.1.md)
 
 ## Validation and limitations
 

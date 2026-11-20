@@ -2,68 +2,50 @@
 
 🌐 **中文** · [English](INSTALL.en.md) · [返回 README](../README.md)
 
-## 1. 下载与核对
+## 先确认你的 Mac
 
-仅面向 Apple Silicon；完整实测系统是 macOS 27.0.1。当前 Release 为 `v0.1.3-beta.1`，文件名 `light-disk-0.1.3-beta.1-arm64.dmg`。构建目标 15.4+ 不等于每个系统版本均已验证。
+仅提供 Apple Silicon（M 系列）版本。完整实测系统为 macOS 27.0.1；15.4+ 是构建目标，其他版本待验证。
 
-从 [Releases](https://github.com/AnthonyChenny/light-disk/releases) 下载 DMG 和 SHA256SUMS.txt。终端进入下载目录后可执行：
+## 首次安装：从下载到使用
 
-```sh
-shasum -a 256 light-disk-0.1.3-beta.1-arm64.dmg
+**第一次使用，只需下载下面两个 DMG；不需要下载源码或其他附件。** macFUSE 是轻盘写入 NTFS 所需的底层组件，要先安装；NTFS-3G 已包含在轻盘安装包里，不用另找。
+
+| 顺序 | 下载什么 | 点击下载 |
+|---|---|---|
+| ① | 官方 macFUSE 5.5.0，文件名 `macfuse-5.5.0.dmg` | [下载 macFUSE](https://github.com/macfuse/macfuse/releases/download/macfuse-5.5.0/macfuse-5.5.0.dmg)（[官方发布页](https://github.com/macfuse/macfuse/releases/tag/macfuse-5.5.0)） |
+| ② | 轻盘 Beta，文件名 `light-disk-0.1.3-beta.1-arm64.dmg` | [下载轻盘](https://github.com/AnthonyChenny/light-disk/releases/download/v0.1.3-beta.1/light-disk-0.1.3-beta.1-arm64.dmg)（[本项目发布页](https://github.com/AnthonyChenny/light-disk/releases/tag/v0.1.3-beta.1)） |
+
+### 第一步：安装 macFUSE
+
+下载完成后，打开“访达 → 下载”，双击 `macfuse-5.5.0.dmg`，再双击里面的 **macFUSE 安装包（`.pkg`）**。按“继续 → 安装”完成，出现认证时在系统窗口输入 Mac 管理员密码或使用 Touch ID。如安装器要求重启，先重启再继续。已经装好 5.5.0 的用户可跳过重复安装。官方页面中的 `debug.tbz`、`sha256`、`sig` 和 `Source code` 都不是普通用户要安装的文件。
+
+### 第二步：打开 macFUSE 的两个扩展
+
+打开 **系统设置 → 通用 → 登录项与扩展 → 文件系统扩展**，启用 **macFUSE** 和 **macFUSE (local)**；优先使用“按类别”入口。轻盘使用 FSKit 模式，**不用进入恢复模式或降低启动安全性**。若找不到入口或开关无反应，见[完整安装指南](#补充扩展开关没有反应)。
+
+### 第三步：安装轻盘
+
+双击 `light-disk-0.1.3-beta.1-arm64.dmg`，再双击里面的 **`安装轻盘.pkg`**，按“继续 → 安装”完成管理员认证。这一步会把轻盘放进“应用程序”，并安装 NTFS 引擎和辅助服务。不要只找一个 App 拖过去；也不需要重复下载独立 `.pkg`。
+
+### 第四步：允许轻盘访问硬盘
+
+打开 **系统设置 → 隐私与安全 → 完全磁盘访问权限**，点击 **`+`**，在文件选择窗口按 **`⌘⇧G`**，粘贴下面这条路径并回车：
+
+```text
+/Library/PrivilegedHelperTools/local.qingpan.helper
 ```
 
-将输出与同一 Release 的 SHA256SUMS.txt 对比。源码 ZIP 包含该版引擎对应源码与补丁，不是普通用户安装必需文件。
+选中该文件，添加并打开开关。若系统要求认证，在系统窗口完成。首次启动轻盘若询问访问可移动卷，也请允许；可在“隐私与安全 → 文件与文件夹 → 轻盘 → 可移除的宗卷”核对。完全磁盘访问是较广的系统权限，请审核后决定。
 
-## 2. 先安装 macFUSE
+### 第五步：打开轻盘，连接硬盘
 
-从 [macFUSE 官方发布页](https://github.com/macfuse/macfuse/releases/tag/macfuse-5.5.0) 下载 5.5.0 并运行官方 `.pkg`，按安装器提示认证。light-disk 不附带、不自动下载或安装此软件。
+从 **访达 → 应用程序 → 轻盘** 启动，点击屏幕顶部菜单栏的硬盘图标，再接入 NTFS 硬盘。等卡片显示 **“可读写”** 后，就能在 Finder 中双向复制、粘贴和拖放。拔线前先点击 **“推出”**，等提示可以拔线再断开。
 
-macFUSE 提供文件系统与 macOS 的桥接；NTFS-3G 负责 NTFS 数据读写。轻盘需要两者才能在 Finder 中写入 NTFS；exFAT 等使用系统原生支持。
+**如果系统提示“无法验证开发者”或阻止打开：** 当前 Beta 是临时签名、尚未公证。确认下载来源后，在“系统设置 → 隐私与安全”审核并使用“仍要打开”（若系统提供）。没有此选项请停止并反馈，不要关闭 Gatekeeper 或 SIP。[详细排错、升级与卸载](#常见问题)
 
-## 3. 启用 FSKit 扩展
+## 补充：扩展开关没有反应
 
-进入「系统设置 → 通用 → 登录项与扩展 → 文件系统扩展」，启用 `macFUSE` 和 `macFUSE (local)`。不同系统的入口名称可能略有差异。优先从“按类别”找到文件系统扩展，不要只在“按应用”列表切换。
-
-本项目显式使用 FSKit：无需恢复模式、降低启动安全性或允许旧内核扩展。参考 [macFUSE 官方指南](https://github.com/macfuse/macfuse/wiki/Getting-Started)。若开关无响应，参考 [上游 #1194](https://github.com/macfuse/macfuse/issues/1194)，尝试“按类别”入口；若仍失败请提交脱敏问题，不要编辑系统数据库、清空 LaunchServices 或运行来路不明的修复脚本。仓库不附带原开发机的设置修复脚本。
-
-## 4. 安装轻盘及辅助服务
-
-打开 light-disk 的 DMG，运行 `安装轻盘.pkg`（安装器标题为“安装轻盘”）。完成管理员认证。此包安装：
-
-- `/Applications/轻盘.app`：中文菜单栏应用。
-- `/Library/PrivilegedHelperTools/local.qingpan.helper`：受限辅助服务。
-- `/Library/LaunchDaemons/local.qingpan.helper.plist`：服务注册。
-- `/Library/Application Support/QingPan/`：NTFS 引擎、许可和签名校验配置。
-
-**不能只复制 App；也不要把不同版本的 App 和辅助服务混用。** App 与辅助服务相互校验签名。
-
-当前是 ad-hoc 临时签名 Beta，尚未经过 Apple 公证。下载可能触发系统拦截：在确认来源、核对摘要后，可在「隐私与安全」审核并使用“仍要打开”（若系统提供）。无需关闭 Gatekeeper 或 SIP；若没有此选项请停止并反馈。原开发机能运行不代表所有 Mac 都能无提示安装。
-
-## 5. 授予磁盘访问权限
-
-打开「系统设置 → 隐私与安全 → 完全磁盘访问权限」：
-
-1. 点 `+`，在文件选择窗口按 `⌘⇧G`。
-2. 输入 `/Library/PrivilegedHelperTools/local.qingpan.helper`，添加并打开开关。
-3. 系统如要求认证，请在系统窗口输入密码或用 Touch ID。
-4. 若轻盘请求访问可移动卷，请允许；也可在「文件与文件夹 → 轻盘 → 可移除的宗卷」开启。
-5. 重新打开轻盘；若设置提示需退出并重开，请按提示执行。
-
-完全磁盘访问权限范围较广，辅助服务用它打开实盘。服务接口只允许经过身份校验的外接物理 NTFS 分卷；源代码公开不代表系统权限范围变小。此权限必须由设备用户决定，公证也不会自动授予。
-
-## 6. 连接与使用
-
-打开「应用程序 → 轻盘」，点击菜单栏硬盘图标。插入硬盘，等待卡片显示“可读写”；组件“已安装”不等于挂载成功。
-
-| 界面 | 含义 |
-|---|---|
-| 可读写 | 可在 Finder 双向复制 |
-| 只读 | 当前不能往该盘写文件 |
-| 未挂载 | Finder 尚不能使用这个分卷 |
-| 详情 | 设备、格式、位置及完整提示 |
-| 推出 | 安全推出整块物理硬盘，完成后才能拔线 |
-
-推出同一硬盘上的一个分卷可能一并推出其他分卷。退出轻盘会关闭菜单栏；已挂载卷的引擎可继续运行，请安全推出后再断开设备。
+尝试在“登录项与扩展”的“按类别”入口打开文件系统扩展，而不只在“按应用”里点开关。[macFUSE 官方指南](https://github.com/macfuse/macfuse/wiki/Getting-Started)与[上游问题 #1194](https://github.com/macfuse/macfuse/issues/1194)可供参考。仍失败请反馈，不要编辑系统数据库或降低启动安全性。
 
 ## 常见问题
 

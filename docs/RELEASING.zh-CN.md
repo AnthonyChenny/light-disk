@@ -42,33 +42,24 @@ git push origin v0.1.3-beta.1
 
 ## 创建预发布 Release
 
-GitHub → Releases → Draft a new release，选择 `v0.1.3-beta.1`，标题 `light-disk / 轻盘 0.1.3-beta.1`，粘贴 [中英文发布说明](releases/v0.1.3-beta.1.md)。**勾选 This is a pre-release**，先保存 Draft，核对资产后再发布。
+GitHub → Releases → Draft a new release，选择对应 Beta 标签，标题 `light-disk / 轻盘 0.1.3-beta.1`，粘贴[中英文发布说明](releases/v0.1.3-beta.1.md)。勾选 **This is a pre-release**，先存草稿并核对后再公开。
 
-推荐上传同一 dist 目录的六个文件：
+**普通用户的附件只上传 DMG：** `light-disk-0.1.3-beta.1-arm64.dmg`。macFUSE 从官方独立安装，下载链接和完整先后顺序必须保留在 Release 正文。校验值也写在正文，不再向用户提供重复的 `.pkg`、手动源码 ZIP、JSON 或说明附件。
 
-- `light-disk-0.1.3-beta.1-arm64.dmg`：用户下载入口，内含完整安装器。
-- `light-disk-0.1.3-beta.1-installer.pkg`：同一安装器的独立下载；GitHub 资产使用英文文件名，DMG 内仍为“安装轻盘.pkg”。
-- `light-disk-0.1.3-beta.1-source.zip`：匹配的全部应用源码、引擎原始归档、补丁与构建脚本。
-- `SHA256SUMS.txt`：上述文件及下面两项的校验值。
-- `RELEASE_NOTES.md`：该版中英文说明。
-- `release-manifest.json`：签名状态、版本、来源提交和依赖边界。
+GitHub 会自动提供标签对应的 `Source code (zip)` 和 `Source code (tar.gz)`，无法逐项隐藏。保留版本标签中的 NTFS-3G 原始归档、补丁、许可证和构建脚本，并从发布正文链接该归档，以继续提供 GPL 对应源码。不要只链接未修改的上游源码，也不要在发布后删除或重写该标签。
 
-GitHub 自动生成的 Source code 压缩包也应对应同一标签，但建议继续附上已核对的 source.zip。不要上传 macFUSE 官方安装包、个人证书、本机配置、硬盘诊断或历史残留备份。
+`prepare-release.py` 生成的其他文件是本地审计记录，仍留在 `dist/`；不必全部上传。已发布包不因 README 更新而重打包或替换。若改动实际程序、资源或包装内容，使用新版本。
 
-已安装 GitHub CLI 并通过本人授权登录后，也可创建**草稿**：
+GitHub CLI 草稿示例：
 
 ```sh
 gh release create v0.1.3-beta.1 \
   --repo AnthonyChenny/light-disk --verify-tag --draft --prerelease \
   --title "light-disk / 轻盘 0.1.3-beta.1" \
   --notes-file docs/releases/v0.1.3-beta.1.md \
-  dist/0.1.3-beta.1/*.dmg dist/0.1.3-beta.1/*.pkg \
-  dist/0.1.3-beta.1/*-source.zip dist/0.1.3-beta.1/SHA256SUMS.txt \
-  dist/0.1.3-beta.1/RELEASE_NOTES.md dist/0.1.3-beta.1/release-manifest.json
+  dist/0.1.3-beta.1/light-disk-0.1.3-beta.1-arm64.dmg
 ```
 
-## 发布前最后核对
-
-确认 Beta/未公证状态清晰、安装顺序完整、两种文档一致、对应源码能重建、macFUSE 不捆绑；在干净 Mac 试安装仍为重要的待完成验收。当前没有 Developer ID 和公证，不宣传为无拦截的正式版。验证事实见 [TESTING.md](TESTING.md)。
+发布前确认源码可从同一个 Release 的标签归档下载、对应二进制；确认 macFUSE 下载链接、安装顺序、临时签名与测试范围写清楚。源代码归档保留不是要求普通用户下载。完整验证范围见 [TESTING.md](TESTING.md)。
 
 参考：[GitHub 官方 Release 文档](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository)。

@@ -33,23 +33,48 @@
 | 签名 | ad-hoc 临时签名，无 Developer ID / Apple 公证 |
 | 不包含 | BitLocker 解锁、分区、格式化、自动修复、ext4 |
 
-## 首次安装：请按顺序完成
+## 首次安装：从下载到使用
 
-**macFUSE → 启用 FSKit 扩展 → 轻盘安装包 → 磁盘访问授权 → 连接硬盘。**
+**第一次使用，只需下载下面两个 DMG；不需要下载源码或其他附件。** macFUSE 是轻盘写入 NTFS 所需的底层组件，要先安装；NTFS-3G 已包含在轻盘安装包里，不用另找。
 
-1. **先装 macFUSE。** 从 [macFUSE 官方网站](https://macfuse.github.io/) 或 [5.5.0 官方发布页](https://github.com/macfuse/macfuse/releases/tag/macfuse-5.5.0)下载安装器。本项目的 DMG **不附带、不自动下载安装 macFUSE**。
-2. **启用文件系统扩展。** 在「系统设置 → 通用 → 登录项与扩展 → 文件系统扩展」启用 `macFUSE` 与 `macFUSE (local)`。优先使用“按类别”视图。轻盘使用 FSKit，无需进入恢复模式降低启动安全性。
-3. **安装轻盘。** 从本仓库 Releases 下载 `light-disk-0.1.3-beta.1-arm64.dmg`，打开后运行 `安装轻盘.pkg`，在系统窗口完成管理员认证。安装包会安装 App、NTFS-3G 和受限辅助服务，**不能只复制 App**。
-4. **授予磁盘访问权限。** 「系统设置 → 隐私与安全 → 完全磁盘访问权限」添加并启用 `/Library/PrivilegedHelperTools/local.qingpan.helper`。文件选择窗口可用 `⌘⇧G` 输入路径。完全磁盘访问是较广的权限，用于辅助服务读取实盘；请审核后决定。在系统询问轻盘访问可移动卷时允许，或在「文件与文件夹」开启其可移除宗卷权限。
-5. **打开轻盘并连接硬盘。** 从「应用程序」启动，点菜单栏硬盘图标；只有卡片显示「可读写」才表示写入已启用。文件操作直接在 Finder 完成，拔线前点「推出」。
+| 顺序 | 下载什么 | 点击下载 |
+|---|---|---|
+| ① | 官方 macFUSE 5.5.0，文件名 `macfuse-5.5.0.dmg` | [下载 macFUSE](https://github.com/macfuse/macfuse/releases/download/macfuse-5.5.0/macfuse-5.5.0.dmg)（[官方发布页](https://github.com/macfuse/macfuse/releases/tag/macfuse-5.5.0)） |
+| ② | 轻盘 Beta，文件名 `light-disk-0.1.3-beta.1-arm64.dmg` | [下载轻盘](https://github.com/AnthonyChenny/light-disk/releases/download/v0.1.3-beta.1/light-disk-0.1.3-beta.1-arm64.dmg)（[本项目发布页](https://github.com/AnthonyChenny/light-disk/releases/tag/v0.1.3-beta.1)） |
 
-下载的 Beta 可能被 Gatekeeper 拦截。确认来自本仓库并核对 SHA-256 后，可在系统「隐私与安全」中审核并选择“仍要打开”；若系统不提供此选项请停止并反馈。不需要关闭 Gatekeeper 或 SIP。[完整安装、升级与卸载指南](docs/INSTALL.zh-CN.md)
+### 第一步：安装 macFUSE
+
+下载完成后，打开“访达 → 下载”，双击 `macfuse-5.5.0.dmg`，再双击里面的 **macFUSE 安装包（`.pkg`）**。按“继续 → 安装”完成，出现认证时在系统窗口输入 Mac 管理员密码或使用 Touch ID。如安装器要求重启，先重启再继续。已经装好 5.5.0 的用户可跳过重复安装。官方页面中的 `debug.tbz`、`sha256`、`sig` 和 `Source code` 都不是普通用户要安装的文件。
+
+### 第二步：打开 macFUSE 的两个扩展
+
+打开 **系统设置 → 通用 → 登录项与扩展 → 文件系统扩展**，启用 **macFUSE** 和 **macFUSE (local)**；优先使用“按类别”入口。轻盘使用 FSKit 模式，**不用进入恢复模式或降低启动安全性**。若找不到入口或开关无反应，见[完整安装指南](docs/INSTALL.zh-CN.md#补充扩展开关没有反应)。
+
+### 第三步：安装轻盘
+
+双击 `light-disk-0.1.3-beta.1-arm64.dmg`，再双击里面的 **`安装轻盘.pkg`**，按“继续 → 安装”完成管理员认证。这一步会把轻盘放进“应用程序”，并安装 NTFS 引擎和辅助服务。不要只找一个 App 拖过去；也不需要重复下载独立 `.pkg`。
+
+### 第四步：允许轻盘访问硬盘
+
+打开 **系统设置 → 隐私与安全 → 完全磁盘访问权限**，点击 **`+`**，在文件选择窗口按 **`⌘⇧G`**，粘贴下面这条路径并回车：
+
+```text
+/Library/PrivilegedHelperTools/local.qingpan.helper
+```
+
+选中该文件，添加并打开开关。若系统要求认证，在系统窗口完成。首次启动轻盘若询问访问可移动卷，也请允许；可在“隐私与安全 → 文件与文件夹 → 轻盘 → 可移除的宗卷”核对。完全磁盘访问是较广的系统权限，请审核后决定。
+
+### 第五步：打开轻盘，连接硬盘
+
+从 **访达 → 应用程序 → 轻盘** 启动，点击屏幕顶部菜单栏的硬盘图标，再接入 NTFS 硬盘。等卡片显示 **“可读写”** 后，就能在 Finder 中双向复制、粘贴和拖放。拔线前先点击 **“推出”**，等提示可以拔线再断开。
+
+**如果系统提示“无法验证开发者”或阻止打开：** 当前 Beta 是临时签名、尚未公证。确认下载来源后，在“系统设置 → 隐私与安全”审核并使用“仍要打开”（若系统提供）。没有此选项请停止并反馈，不要关闭 Gatekeeper 或 SIP。[详细排错、升级与卸载](docs/INSTALL.zh-CN.md)
 
 ## 开源与发布
 
 自写 Swift 代码采用 [MIT](LICENSE)。NTFS-3G 及其修改保留各自 GPL/LGPL 许可；macFUSE 是独立依赖，具有包括商业二进制捆绑限制在内的单独许可。**MIT 不适用于整个依赖集合**。详见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
 
-每个 Release 应同时提供 DMG、对应源码 ZIP、SHA256SUMS.txt；请使用带 `beta` 的标签并勾选 GitHub 的 **This is a pre-release**。当前目录内 `dist/` 是本地待上传资产，不随 Git 提交。[当前版本说明](docs/releases/v0.1.3-beta.1.md)
+当前 Release 的手动附件只保留 DMG，普通用户只下载它。GitHub 自动提供的两个 `Source code` 下载项面向开发者，包含标签对应的引擎源码、补丁和构建脚本，无需安装。校验值放在发布说明中；本地 `dist/` 保留构建审计文件，不随 Git 提交。[当前版本说明](docs/releases/v0.1.3-beta.1.md)
 
 ## 验证与限制
 
