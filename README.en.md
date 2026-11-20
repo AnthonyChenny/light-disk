@@ -60,3 +60,11 @@ Start with disposable data on your own setup and keep separate backups of import
 ## Contributing
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md). Include OS version, chip, filesystem and sanitized errors in reports. Do not upload file contents, complete disk serials or passwords.
+
+## Buy me a coffee ☕
+
+If light-disk has been useful to you, you're welcome to buy me a coffee. No pressure—a star or a little feedback is just as appreciated.
+
+Scan the QR code to add me on WeChat if you'd like to chat about light-disk or treat me to a coffee:
+
+<img src="docs/assets/wechat-contact.jpg" alt="Add the author on WeChat using this contact QR code" width="260">
