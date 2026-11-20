@@ -47,7 +47,7 @@ GitHub → Releases → Draft a new release. Select `v0.1.3-beta.1`; title it `l
 Upload all six matching files from one dist directory:
 
 - `light-disk-0.1.3-beta.1-arm64.dmg`: the main user download with the complete installer.
-- `安装轻盘.pkg`: optional direct installer download, identical to the DMG copy.
+- `light-disk-0.1.3-beta.1-installer.pkg`: optional direct installer download, identical to `安装轻盘.pkg` inside the DMG; ASCII naming avoids GitHub asset-name rewriting.
 - `light-disk-0.1.3-beta.1-source.zip`: matching App source, original engine archive, modifications and build scripts.
 - `SHA256SUMS.txt`: hashes of those assets and the next two files.
 - `RELEASE_NOTES.md`: bilingual version notes.

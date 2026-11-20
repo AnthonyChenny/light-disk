@@ -12,7 +12,7 @@ version = (root / 'VERSION').read_text().strip()
 if not re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+-beta\.[0-9]+', version):
     raise SystemExit('A public Beta must have a -beta.N VERSION')
 out = root / 'dist' / version
-assets = [out / f'light-disk-{version}-arm64.dmg', out / '安装轻盘.pkg']
+assets = [out / f'light-disk-{version}-arm64.dmg', out / f'light-disk-{version}-installer.pkg']
 if not all(p.is_file() for p in assets):
     raise SystemExit('Build the DMG and installer first; see docs/BUILD.en.md')
 subprocess.run(['python3', str(root / 'scripts/check-repository.py')], check=True)

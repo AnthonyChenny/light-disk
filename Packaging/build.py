@@ -106,7 +106,7 @@ scripts.mkdir(exist_ok=True)
 for name in ['preinstall', 'postinstall']:
     copy(source / 'Packaging' / name, scripts / name)
     (scripts / name).chmod(0o755)
-pkg = output / '安装轻盘.pkg'
+pkg = output / f'light-disk-{version}-installer.pkg'
 component_pkg = work / 'QingPanComponents.pkg'
 components = work / 'components.plist'
 with components.open('wb') as f:
@@ -136,7 +136,7 @@ run('/usr/bin/productbuild', '--distribution', distribution,
 stage = work / 'dmg'
 if stage.exists(): shutil.rmtree(stage)
 stage.mkdir()
-copy(pkg, stage / pkg.name)
+copy(pkg, stage / '安装轻盘.pkg')
 copy(resources / '使用说明.txt', stage / '请先阅读-ReadMe.txt')
 copy(resources / 'Installation-English.txt', stage / 'ReadMe-English.txt')
 copy(resources / '第三方许可.txt', stage / '第三方许可.txt')

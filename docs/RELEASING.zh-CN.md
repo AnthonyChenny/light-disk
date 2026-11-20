@@ -47,7 +47,7 @@ GitHub → Releases → Draft a new release，选择 `v0.1.3-beta.1`，标题 `l
 推荐上传同一 dist 目录的六个文件：
 
 - `light-disk-0.1.3-beta.1-arm64.dmg`：用户下载入口，内含完整安装器。
-- `安装轻盘.pkg`：同一安装器的独立下载，可选便捷入口。
+- `light-disk-0.1.3-beta.1-installer.pkg`：同一安装器的独立下载；GitHub 资产使用英文文件名，DMG 内仍为“安装轻盘.pkg”。
 - `light-disk-0.1.3-beta.1-source.zip`：匹配的全部应用源码、引擎原始归档、补丁与构建脚本。
 - `SHA256SUMS.txt`：上述文件及下面两项的校验值。
 - `RELEASE_NOTES.md`：该版中英文说明。
