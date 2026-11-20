@@ -25,4 +25,4 @@ The v0.1.3-beta.1 source tree was built from its pinned NTFS source archive and 
 
 The freshly built engine also passed an 8 MiB read/write round trip using an inherited descriptor after pathname access was removed; Unicode/spaces, rename and delete passed. This used only a disposable NTFS image. No physical user disk was written in this public-packaging round.
 
-CI configuration is included but has not run on GitHub merely because these local checks passed. The repository and release assets are prepared locally; no remote publish is implied.
+GitHub Actions subsequently passed repository checks, a release build and policy checks on commit `f751673` ([run](https://github.com/AnthonyChenny/light-disk/actions/runs/44670157230)). The extension settings entry point was adjusted to compile with the hosted runner SDK. Hosted CI does not extend physical-disk or clean-install coverage. Source is pushed to GitHub; binary assets remain local until a Release is explicitly created.
